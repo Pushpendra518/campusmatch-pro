@@ -17,12 +17,14 @@ const FacultyApplications = () => {
   const { data: applications, isLoading } = useQuery({
     queryKey: ["faculty-applications"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: apps, error } = await supabase
         .from("applications")
-        .select("*, internships(title, company), profiles!applications_student_id_fkey(full_name, email, department)")
+        .select("*, internships(title, company)")
         .order("applied_at", { ascending: false });
       if (error) throw error;
-      return data;
+      const studentIds = [...new Set(apps?.map((a) => a.student_id) ?? [])];
+      const { data: profiles } = await supabase.from("profiles").select("*").in("user_id", studentIds);
+      return apps?.map((a) => ({ ...a, student_profile: profiles?.find((p) => p.user_id === a.student_id) })) ?? [];
     },
   });
 
@@ -59,8 +61,8 @@ const FacultyApplications = () => {
               <TableBody>
                 {applications?.map((app: any) => (
                   <TableRow key={app.id}>
-                    <TableCell className="font-medium">{app.profiles?.full_name}</TableCell>
-                    <TableCell>{app.profiles?.department || "—"}</TableCell>
+                    <TableCell className="font-medium">{app.student_profile?.full_name}</TableCell>
+                    <TableCell>{app.student_profile?.department || "—"}</TableCell>
                     <TableCell>{app.internships?.title}</TableCell>
                     <TableCell className="capitalize">{app.status}</TableCell>
                     <TableCell>{new Date(app.applied_at).toLocaleDateString()}</TableCell>
@@ -82,7 +84,7 @@ const FacultyApplications = () => {
           <DialogHeader><DialogTitle>Review Application</DialogTitle></DialogHeader>
           {reviewApp && (
             <div className="space-y-3">
-              <p><strong>Student:</strong> {reviewApp.profiles?.full_name}</p>
+              <p><strong>Student:</strong> {reviewApp.student_profile?.full_name}</p>
               <p><strong>Internship:</strong> {reviewApp.internships?.title} at {reviewApp.internships?.company}</p>
               <p><strong>Cover Letter:</strong> {reviewApp.cover_letter || "None"}</p>
               <Textarea placeholder="Add your comment..." value={comment} onChange={(e) => setComment(e.target.value)} rows={3} />

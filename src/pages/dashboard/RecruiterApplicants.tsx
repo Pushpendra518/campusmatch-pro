@@ -17,13 +17,15 @@ const RecruiterApplicants = () => {
       const { data: internships } = await supabase.from("internships").select("id").eq("posted_by", user!.id);
       const ids = internships?.map((i) => i.id) ?? [];
       if (ids.length === 0) return [];
-      const { data, error } = await supabase
+      const { data: apps, error } = await supabase
         .from("applications")
-        .select("*, internships(title, company), profiles!applications_student_id_fkey(full_name, email, department, resume_url)")
+        .select("*, internships(title, company)")
         .in("internship_id", ids)
         .order("applied_at", { ascending: false });
       if (error) throw error;
-      return data;
+      const studentIds = [...new Set(apps?.map((a) => a.student_id) ?? [])];
+      const { data: profiles } = await supabase.from("profiles").select("*").in("user_id", studentIds);
+      return apps?.map((a) => ({ ...a, student_profile: profiles?.find((p) => p.user_id === a.student_id) })) ?? [];
     },
     enabled: !!user,
   });
@@ -61,13 +63,13 @@ const RecruiterApplicants = () => {
               <TableBody>
                 {applications?.map((app: any) => (
                   <TableRow key={app.id}>
-                    <TableCell className="font-medium">{app.profiles?.full_name}</TableCell>
-                    <TableCell>{app.profiles?.email}</TableCell>
+                    <TableCell className="font-medium">{app.student_profile?.full_name}</TableCell>
+                    <TableCell>{app.student_profile?.email}</TableCell>
                     <TableCell>{app.internships?.title}</TableCell>
                     <TableCell className="capitalize">{app.status}</TableCell>
                     <TableCell>
-                      {app.profiles?.resume_url ? (
-                        <a href={app.profiles.resume_url} target="_blank" rel="noreferrer" className="text-primary underline text-sm">View</a>
+                      {app.student_profile?.resume_url ? (
+                        <a href={app.student_profile.resume_url} target="_blank" rel="noreferrer" className="text-primary underline text-sm">View</a>
                       ) : "—"}
                     </TableCell>
                     <TableCell>

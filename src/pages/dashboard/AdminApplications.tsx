@@ -13,12 +13,15 @@ const AdminApplications = () => {
   const { data: applications, isLoading } = useQuery({
     queryKey: ["admin-applications"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: apps, error } = await supabase
         .from("applications")
-        .select("*, internships(title, company), profiles!applications_student_id_fkey(full_name, email)")
+        .select("*, internships(title, company)")
         .order("applied_at", { ascending: false });
       if (error) throw error;
-      return data;
+      // Fetch student profiles
+      const studentIds = [...new Set(apps?.map((a) => a.student_id) ?? [])];
+      const { data: profiles } = await supabase.from("profiles").select("*").in("user_id", studentIds);
+      return apps?.map((a) => ({ ...a, student_profile: profiles?.find((p) => p.user_id === a.student_id) })) ?? [];
     },
   });
 
@@ -53,7 +56,7 @@ const AdminApplications = () => {
               <TableBody>
                 {applications?.map((app: any) => (
                   <TableRow key={app.id}>
-                    <TableCell>{app.profiles?.full_name || "—"}</TableCell>
+                    <TableCell>{app.student_profile?.full_name || "—"}</TableCell>
                     <TableCell className="font-medium">{app.internships?.title}</TableCell>
                     <TableCell>{app.internships?.company}</TableCell>
                     <TableCell className="capitalize">{app.status}</TableCell>
