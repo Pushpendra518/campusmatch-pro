@@ -1,0 +1,118 @@
+import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import DashboardLayout from "@/components/DashboardLayout";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import { Search, MapPin, DollarSign, Calendar } from "lucide-react";
+
+const StudentInternships = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [search, setSearch] = useState("");
+  const [applyId, setApplyId] = useState<string | null>(null);
+  const [coverLetter, setCoverLetter] = useState("");
+
+  const { data: internships, isLoading } = useQuery({
+    queryKey: ["internships"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("internships").select("*").eq("status", "active").order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: myApps } = useQuery({
+    queryKey: ["my-applications", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase.from("applications").select("internship_id").eq("student_id", user!.id);
+      return data?.map((a) => a.internship_id) ?? [];
+    },
+    enabled: !!user,
+  });
+
+  const applyMutation = useMutation({
+    mutationFn: async ({ internshipId, coverLetter }: { internshipId: string; coverLetter: string }) => {
+      const { error } = await supabase.from("applications").insert({ student_id: user!.id, internship_id: internshipId, cover_letter: coverLetter });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Application submitted!" });
+      queryClient.invalidateQueries({ queryKey: ["my-applications"] });
+      setApplyId(null);
+      setCoverLetter("");
+    },
+    onError: (err: any) => toast({ title: "Error", description: err.message, variant: "destructive" }),
+  });
+
+  const filtered = internships?.filter((i) =>
+    i.title.toLowerCase().includes(search.toLowerCase()) || i.company.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <DashboardLayout>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold">Browse Internships</h2>
+        </div>
+        <div className="relative max-w-md">
+          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+          <Input className="pl-10" placeholder="Search by title or company..." value={search} onChange={(e) => setSearch(e.target.value)} />
+        </div>
+        {isLoading ? (
+          <p className="text-muted-foreground">Loading...</p>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {filtered?.map((internship) => {
+              const applied = myApps?.includes(internship.id);
+              return (
+                <Card key={internship.id}>
+                  <CardHeader>
+                    <CardTitle className="text-lg">{internship.title}</CardTitle>
+                    <CardDescription>{internship.company}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-sm">
+                    {internship.location && <div className="flex items-center gap-2"><MapPin className="h-3 w-3" />{internship.location}</div>}
+                    {internship.stipend && <div className="flex items-center gap-2"><DollarSign className="h-3 w-3" />{internship.stipend}</div>}
+                    {internship.deadline && <div className="flex items-center gap-2"><Calendar className="h-3 w-3" />{new Date(internship.deadline).toLocaleDateString()}</div>}
+                    <p className="text-muted-foreground line-clamp-3">{internship.description}</p>
+                  </CardContent>
+                  <CardFooter>
+                    {applied ? (
+                      <Badge variant="secondary">Applied</Badge>
+                    ) : (
+                      <Button size="sm" onClick={() => setApplyId(internship.id)}>Apply Now</Button>
+                    )}
+                  </CardFooter>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+        {filtered?.length === 0 && !isLoading && <p className="text-muted-foreground">No internships found.</p>}
+      </div>
+
+      <Dialog open={!!applyId} onOpenChange={() => setApplyId(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Apply for Internship</DialogTitle></DialogHeader>
+          <Textarea placeholder="Write a cover letter (optional)..." value={coverLetter} onChange={(e) => setCoverLetter(e.target.value)} rows={5} />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setApplyId(null)}>Cancel</Button>
+            <Button onClick={() => applyMutation.mutate({ internshipId: applyId!, coverLetter })} disabled={applyMutation.isPending}>
+              {applyMutation.isPending ? "Submitting..." : "Submit Application"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </DashboardLayout>
+  );
+};
+
+export default StudentInternships;
