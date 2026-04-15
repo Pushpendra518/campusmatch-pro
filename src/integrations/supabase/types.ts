@@ -103,6 +103,65 @@ export type Database = {
         }
         Relationships: []
       }
+      interviews: {
+        Row: {
+          application_id: string
+          comments: string | null
+          created_at: string
+          id: string
+          interview_date: string
+          interview_time: string
+          interview_type: string
+          location: string | null
+          meeting_link: string | null
+          rating: number | null
+          recruiter_id: string
+          selection_status: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          application_id: string
+          comments?: string | null
+          created_at?: string
+          id?: string
+          interview_date: string
+          interview_time: string
+          interview_type?: string
+          location?: string | null
+          meeting_link?: string | null
+          rating?: number | null
+          recruiter_id: string
+          selection_status?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          application_id?: string
+          comments?: string | null
+          created_at?: string
+          id?: string
+          interview_date?: string
+          interview_time?: string
+          interview_type?: string
+          location?: string | null
+          meeting_link?: string | null
+          rating?: number | null
+          recruiter_id?: string
+          selection_status?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interviews_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null

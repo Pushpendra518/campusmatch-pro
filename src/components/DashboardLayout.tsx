@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/sidebar";
 import { NavLink } from "@/components/NavLink";
 import {
-  LayoutDashboard, Briefcase, FileText, Users, UserCircle, LogOut, PlusCircle, ClipboardList, Building2,
+  LayoutDashboard, Briefcase, FileText, Users, UserCircle, LogOut, PlusCircle, ClipboardList, Building2, CalendarCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -33,6 +33,7 @@ const menuByRole = {
     { title: "Post Internship", url: "/dashboard/recruiter/post", icon: PlusCircle },
     { title: "My Internships", url: "/dashboard/recruiter/internships", icon: Building2 },
     { title: "Applicants", url: "/dashboard/recruiter/applicants", icon: Users },
+    { title: "Interviews", url: "/dashboard/recruiter/interviews", icon: CalendarCheck },
   ],
 };
 

@@ -24,6 +24,7 @@ import RecruiterDashboard from "@/pages/dashboard/RecruiterDashboard";
 import RecruiterPost from "@/pages/dashboard/RecruiterPost";
 import RecruiterInternships from "@/pages/dashboard/RecruiterInternships";
 import RecruiterApplicants from "@/pages/dashboard/RecruiterApplicants";
+import RecruiterInterviewsPage from "@/pages/dashboard/RecruiterInterviews";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,7 @@ const App = () => (
             <Route path="/dashboard/recruiter/post" element={<ProtectedRoute allowedRoles={["recruiter"]}><RecruiterPost /></ProtectedRoute>} />
             <Route path="/dashboard/recruiter/internships" element={<ProtectedRoute allowedRoles={["recruiter"]}><RecruiterInternships /></ProtectedRoute>} />
             <Route path="/dashboard/recruiter/applicants" element={<ProtectedRoute allowedRoles={["recruiter"]}><RecruiterApplicants /></ProtectedRoute>} />
+            <Route path="/dashboard/recruiter/interviews" element={<ProtectedRoute allowedRoles={["recruiter"]}><RecruiterInterviewsPage /></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
