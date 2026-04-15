@@ -5,6 +5,20 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Briefcase, FileText, Building2 } from "lucide-react";
 
+const StatCard = ({ title, value, icon: Icon, color }: { title: string; value: number; icon: any; color: string }) => (
+  <Card className="shadow-sm hover:shadow-md transition-shadow duration-200">
+    <CardHeader className="flex flex-row items-center justify-between pb-2">
+      <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+      <div className={`h-9 w-9 rounded-lg flex items-center justify-center ${color}`}>
+        <Icon className="h-4 w-4" />
+      </div>
+    </CardHeader>
+    <CardContent>
+      <div className="text-3xl font-bold">{value}</div>
+    </CardContent>
+  </Card>
+);
+
 const AdminDashboard = () => {
   const { profile } = useAuth();
 
@@ -28,16 +42,16 @@ const AdminDashboard = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div>
-          <h2 className="text-2xl font-bold">Admin Dashboard</h2>
-          <p className="text-muted-foreground">Welcome, {profile?.full_name}. Here's the system overview.</p>
+          <h2 className="text-2xl font-bold tracking-tight">Admin Dashboard</h2>
+          <p className="text-muted-foreground mt-1">Welcome, {profile?.full_name}. Here's the system overview.</p>
         </div>
-        <div className="grid gap-4 md:grid-cols-4">
-          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">Total Students</CardTitle><Users className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats?.students}</div></CardContent></Card>
-          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">Internships</CardTitle><Briefcase className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats?.internships}</div></CardContent></Card>
-          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">Applications</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats?.applications}</div></CardContent></Card>
-          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">Recruiters</CardTitle><Building2 className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats?.recruiters}</div></CardContent></Card>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard title="Total Students" value={stats?.students ?? 0} icon={Users} color="bg-primary/10 text-primary" />
+          <StatCard title="Internships" value={stats?.internships ?? 0} icon={Briefcase} color="bg-violet-500/10 text-violet-600" />
+          <StatCard title="Applications" value={stats?.applications ?? 0} icon={FileText} color="bg-amber-500/10 text-amber-600" />
+          <StatCard title="Recruiters" value={stats?.recruiters ?? 0} icon={Building2} color="bg-emerald-500/10 text-emerald-600" />
         </div>
       </div>
     </DashboardLayout>
