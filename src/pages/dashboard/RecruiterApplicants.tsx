@@ -5,6 +5,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import InterviewForm from "@/components/interviews/InterviewForm";
 
 const RecruiterApplicants = () => {
   const { user } = useAuth();
@@ -57,7 +58,8 @@ const RecruiterApplicants = () => {
                   <TableHead>Internship</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Resume</TableHead>
-                  <TableHead>Action</TableHead>
+                    <TableHead>Action</TableHead>
+                    <TableHead>Interview</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -82,6 +84,9 @@ const RecruiterApplicants = () => {
                           <SelectItem value="rejected">Rejected</SelectItem>
                         </SelectContent>
                       </Select>
+                    </TableCell>
+                    <TableCell>
+                      <InterviewForm applicationId={app.id} studentName={app.student_profile?.full_name ?? "Student"} />
                     </TableCell>
                   </TableRow>
                 ))}
