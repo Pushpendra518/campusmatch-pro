@@ -59,8 +59,9 @@ const StudentInternships = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Browse Internships</h2>
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Browse Internships</h2>
+          <p className="text-muted-foreground mt-1">Find and apply to internship opportunities.</p>
         </div>
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -73,22 +74,22 @@ const StudentInternships = () => {
             {filtered?.map((internship) => {
               const applied = myApps?.includes(internship.id);
               return (
-                <Card key={internship.id}>
-                  <CardHeader>
+                <Card key={internship.id} className="shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 flex flex-col">
+                  <CardHeader className="pb-3">
                     <CardTitle className="text-lg">{internship.title}</CardTitle>
-                    <CardDescription>{internship.company}</CardDescription>
+                    <CardDescription className="font-medium">{internship.company}</CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-2 text-sm">
-                    {internship.location && <div className="flex items-center gap-2"><MapPin className="h-3 w-3" />{internship.location}</div>}
-                    {internship.stipend && <div className="flex items-center gap-2"><DollarSign className="h-3 w-3" />{internship.stipend}</div>}
-                    {internship.deadline && <div className="flex items-center gap-2"><Calendar className="h-3 w-3" />{new Date(internship.deadline).toLocaleDateString()}</div>}
-                    <p className="text-muted-foreground line-clamp-3">{internship.description}</p>
+                  <CardContent className="space-y-2 text-sm flex-1">
+                    {internship.location && <div className="flex items-center gap-2 text-muted-foreground"><MapPin className="h-3.5 w-3.5" />{internship.location}</div>}
+                    {internship.stipend && <div className="flex items-center gap-2 text-muted-foreground"><DollarSign className="h-3.5 w-3.5" />{internship.stipend}</div>}
+                    {internship.deadline && <div className="flex items-center gap-2 text-muted-foreground"><Calendar className="h-3.5 w-3.5" />{new Date(internship.deadline).toLocaleDateString()}</div>}
+                    <p className="text-muted-foreground line-clamp-3 pt-1">{internship.description}</p>
                   </CardContent>
-                  <CardFooter>
+                  <CardFooter className="pt-3">
                     {applied ? (
-                      <Badge variant="secondary">Applied</Badge>
+                      <Badge variant="secondary" className="px-3 py-1">✓ Applied</Badge>
                     ) : (
-                      <Button size="sm" onClick={() => setApplyId(internship.id)}>Apply Now</Button>
+                      <Button size="sm" onClick={() => setApplyId(internship.id)} className="shadow-sm">Apply Now</Button>
                     )}
                   </CardFooter>
                 </Card>
@@ -96,7 +97,11 @@ const StudentInternships = () => {
             })}
           </div>
         )}
-        {filtered?.length === 0 && !isLoading && <p className="text-muted-foreground">No internships found.</p>}
+        {filtered?.length === 0 && !isLoading && (
+          <div className="rounded-xl border border-dashed p-12 text-center">
+            <p className="text-muted-foreground">No internships found.</p>
+          </div>
+        )}
       </div>
 
       <Dialog open={!!applyId} onOpenChange={() => setApplyId(null)}>

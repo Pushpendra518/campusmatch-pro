@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Trash2 } from "lucide-react";
@@ -61,32 +62,35 @@ const AdminInternships = () => {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Manage Internships</h2>
-          <Button onClick={() => setOpen(true)}><Plus className="mr-2 h-4 w-4" />Add Internship</Button>
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight">Manage Internships</h2>
+            <p className="text-muted-foreground mt-1">Create, view, and remove internship listings.</p>
+          </div>
+          <Button onClick={() => setOpen(true)} className="shadow-sm"><Plus className="mr-2 h-4 w-4" />Add Internship</Button>
         </div>
         {isLoading ? <p>Loading...</p> : (
-          <div className="rounded-md border">
+          <div className="rounded-xl border shadow-sm overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Company</TableHead>
-                  <TableHead>Location</TableHead>
-                  <TableHead>Stipend</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="font-semibold">Title</TableHead>
+                  <TableHead className="font-semibold">Company</TableHead>
+                  <TableHead className="font-semibold">Location</TableHead>
+                  <TableHead className="font-semibold">Stipend</TableHead>
+                  <TableHead className="font-semibold">Status</TableHead>
+                  <TableHead className="font-semibold">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {internships?.map((i) => (
-                  <TableRow key={i.id}>
+                {internships?.map((i, idx) => (
+                  <TableRow key={i.id} className={idx % 2 === 0 ? "bg-background" : "bg-muted/20"}>
                     <TableCell className="font-medium">{i.title}</TableCell>
                     <TableCell>{i.company}</TableCell>
-                    <TableCell>{i.location || "—"}</TableCell>
-                    <TableCell>{i.stipend || "—"}</TableCell>
-                    <TableCell className="capitalize">{i.status}</TableCell>
+                    <TableCell className="text-muted-foreground">{i.location || "—"}</TableCell>
+                    <TableCell className="text-muted-foreground">{i.stipend || "—"}</TableCell>
+                    <TableCell><Badge variant="outline" className="capitalize">{i.status}</Badge></TableCell>
                     <TableCell>
-                      <Button variant="ghost" size="icon" onClick={() => deleteMutation.mutate(i.id)}>
+                      <Button variant="ghost" size="icon" className="hover:bg-destructive/10" onClick={() => deleteMutation.mutate(i.id)}>
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
                     </TableCell>
@@ -101,16 +105,16 @@ const AdminInternships = () => {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader><DialogTitle>Create Internship</DialogTitle></DialogHeader>
-          <div className="space-y-3">
-            <div><Label>Title</Label><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
-            <div><Label>Company</Label><Input value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} /></div>
-            <div><Label>Description</Label><Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
-            <div className="grid grid-cols-2 gap-3">
-              <div><Label>Location</Label><Input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} /></div>
-              <div><Label>Stipend</Label><Input value={form.stipend} onChange={(e) => setForm({ ...form, stipend: e.target.value })} /></div>
+          <div className="space-y-4">
+            <div className="space-y-2"><Label>Title</Label><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
+            <div className="space-y-2"><Label>Company</Label><Input value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} /></div>
+            <div className="space-y-2"><Label>Description</Label><Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2"><Label>Location</Label><Input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} /></div>
+              <div className="space-y-2"><Label>Stipend</Label><Input value={form.stipend} onChange={(e) => setForm({ ...form, stipend: e.target.value })} /></div>
             </div>
-            <div><Label>Requirements</Label><Textarea value={form.requirements} onChange={(e) => setForm({ ...form, requirements: e.target.value })} /></div>
-            <div><Label>Deadline</Label><Input type="date" value={form.deadline} onChange={(e) => setForm({ ...form, deadline: e.target.value })} /></div>
+            <div className="space-y-2"><Label>Requirements</Label><Textarea value={form.requirements} onChange={(e) => setForm({ ...form, requirements: e.target.value })} /></div>
+            <div className="space-y-2"><Label>Deadline</Label><Input type="date" value={form.deadline} onChange={(e) => setForm({ ...form, deadline: e.target.value })} /></div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
