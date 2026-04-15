@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { UserCircle } from "lucide-react";
 
 const StudentProfile = () => {
   const { profile, user, refreshProfile } = useAuth();
@@ -54,36 +55,47 @@ const StudentProfile = () => {
   return (
     <DashboardLayout>
       <div className="max-w-2xl space-y-6">
-        <h2 className="text-2xl font-bold">My Profile</h2>
-        <Card>
-          <CardHeader><CardTitle>Personal Information</CardTitle></CardHeader>
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">My Profile</h2>
+          <p className="text-muted-foreground mt-1">Manage your personal information and resume.</p>
+        </div>
+        <Card className="shadow-sm">
+          <CardHeader className="flex flex-row items-center gap-4 pb-4">
+            <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center">
+              <UserCircle className="h-7 w-7 text-primary" />
+            </div>
+            <div>
+              <CardTitle className="text-lg">Personal Information</CardTitle>
+              <p className="text-sm text-muted-foreground">{profile?.email}</p>
+            </div>
+          </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Full Name</Label>
-              <Input value={fullName} onChange={(e) => setFullName(e.target.value)} />
-            </div>
-            <div className="space-y-2">
-              <Label>Email</Label>
-              <Input value={profile?.email || ""} disabled />
-            </div>
-            <div className="space-y-2">
-              <Label>Phone</Label>
-              <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Full Name</Label>
+                <Input value={fullName} onChange={(e) => setFullName(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Phone</Label>
+                <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 ..." />
+              </div>
             </div>
             <div className="space-y-2">
               <Label>Department</Label>
-              <Input value={department} onChange={(e) => setDepartment(e.target.value)} />
+              <Input value={department} onChange={(e) => setDepartment(e.target.value)} placeholder="Computer Science" />
             </div>
             <div className="space-y-2">
               <Label>Resume</Label>
               <Input type="file" accept=".pdf,.doc,.docx" onChange={handleResumeUpload} />
               {profile?.resume_url && (
-                <a href={profile.resume_url} target="_blank" rel="noreferrer" className="text-sm text-primary underline">
-                  View current resume
+                <a href={profile.resume_url} target="_blank" rel="noreferrer" className="text-sm text-primary font-medium hover:underline">
+                  View current resume →
                 </a>
               )}
             </div>
-            <Button onClick={handleSave} disabled={saving}>{saving ? "Saving..." : "Save Changes"}</Button>
+            <Button onClick={handleSave} disabled={saving} className="shadow-sm">
+              {saving ? "Saving..." : "Save Changes"}
+            </Button>
           </CardContent>
         </Card>
       </div>

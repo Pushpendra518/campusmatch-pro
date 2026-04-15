@@ -21,29 +21,32 @@ const RecruiterInternships = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold">My Internships</h2>
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">My Internships</h2>
+          <p className="text-muted-foreground mt-1">View all internships you've posted.</p>
+        </div>
         {isLoading ? <p>Loading...</p> : (
-          <div className="rounded-md border">
+          <div className="rounded-xl border shadow-sm overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Company</TableHead>
-                  <TableHead>Location</TableHead>
-                  <TableHead>Stipend</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Created</TableHead>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="font-semibold">Title</TableHead>
+                  <TableHead className="font-semibold">Company</TableHead>
+                  <TableHead className="font-semibold">Location</TableHead>
+                  <TableHead className="font-semibold">Stipend</TableHead>
+                  <TableHead className="font-semibold">Status</TableHead>
+                  <TableHead className="font-semibold">Created</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {internships?.map((i) => (
-                  <TableRow key={i.id}>
+                {internships?.map((i, idx) => (
+                  <TableRow key={i.id} className={idx % 2 === 0 ? "bg-background" : "bg-muted/20"}>
                     <TableCell className="font-medium">{i.title}</TableCell>
                     <TableCell>{i.company}</TableCell>
-                    <TableCell>{i.location || "—"}</TableCell>
-                    <TableCell>{i.stipend || "—"}</TableCell>
+                    <TableCell className="text-muted-foreground">{i.location || "—"}</TableCell>
+                    <TableCell className="text-muted-foreground">{i.stipend || "—"}</TableCell>
                     <TableCell><Badge variant="outline" className="capitalize">{i.status}</Badge></TableCell>
-                    <TableCell>{new Date(i.created_at).toLocaleDateString()}</TableCell>
+                    <TableCell className="text-muted-foreground">{new Date(i.created_at).toLocaleDateString()}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

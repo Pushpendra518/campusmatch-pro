@@ -21,27 +21,30 @@ const AdminUsers = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold">Manage Users</h2>
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Manage Users</h2>
+          <p className="text-muted-foreground mt-1">View all registered users and their roles.</p>
+        </div>
         {isLoading ? <p>Loading...</p> : (
-          <div className="rounded-md border">
+          <div className="rounded-xl border shadow-sm overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Department</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Joined</TableHead>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="font-semibold">Name</TableHead>
+                  <TableHead className="font-semibold">Email</TableHead>
+                  <TableHead className="font-semibold">Department</TableHead>
+                  <TableHead className="font-semibold">Role</TableHead>
+                  <TableHead className="font-semibold">Joined</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users?.map((u) => (
-                  <TableRow key={u.id}>
+                {users?.map((u, i) => (
+                  <TableRow key={u.id} className={i % 2 === 0 ? "bg-background" : "bg-muted/20"}>
                     <TableCell className="font-medium">{u.full_name || "—"}</TableCell>
-                    <TableCell>{u.email}</TableCell>
-                    <TableCell>{u.department || "—"}</TableCell>
+                    <TableCell className="text-muted-foreground">{u.email}</TableCell>
+                    <TableCell className="text-muted-foreground">{u.department || "—"}</TableCell>
                     <TableCell><Badge variant="outline" className="capitalize">{u.role}</Badge></TableCell>
-                    <TableCell>{new Date(u.created_at).toLocaleDateString()}</TableCell>
+                    <TableCell className="text-muted-foreground">{new Date(u.created_at).toLocaleDateString()}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

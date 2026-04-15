@@ -5,11 +5,11 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 
-const statusColor: Record<string, string> = {
-  pending: "bg-yellow-100 text-yellow-800",
-  approved: "bg-green-100 text-green-800",
-  rejected: "bg-red-100 text-red-800",
-  shortlisted: "bg-blue-100 text-blue-800",
+const statusVariant: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+  pending: "secondary",
+  approved: "default",
+  rejected: "destructive",
+  shortlisted: "outline",
 };
 
 const StudentApplications = () => {
@@ -32,35 +32,38 @@ const StudentApplications = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold">My Applications</h2>
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">My Applications</h2>
+          <p className="text-muted-foreground mt-1">Track the status of your internship applications.</p>
+        </div>
         {isLoading ? (
           <p className="text-muted-foreground">Loading...</p>
         ) : applications?.length === 0 ? (
-          <p className="text-muted-foreground">No applications yet. Browse internships to apply!</p>
+          <div className="rounded-xl border border-dashed p-12 text-center">
+            <p className="text-muted-foreground">No applications yet. Browse internships to apply!</p>
+          </div>
         ) : (
-          <div className="rounded-md border">
+          <div className="rounded-xl border shadow-sm overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Internship</TableHead>
-                  <TableHead>Company</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Applied</TableHead>
-                  <TableHead>Faculty Comment</TableHead>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="font-semibold">Internship</TableHead>
+                  <TableHead className="font-semibold">Company</TableHead>
+                  <TableHead className="font-semibold">Status</TableHead>
+                  <TableHead className="font-semibold">Applied</TableHead>
+                  <TableHead className="font-semibold">Faculty Comment</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {applications?.map((app: any) => (
-                  <TableRow key={app.id}>
+                {applications?.map((app: any, i: number) => (
+                  <TableRow key={app.id} className={i % 2 === 0 ? "bg-background" : "bg-muted/20"}>
                     <TableCell className="font-medium">{app.internships?.title}</TableCell>
                     <TableCell>{app.internships?.company}</TableCell>
                     <TableCell>
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${statusColor[app.status] || ""}`}>
-                        {app.status}
-                      </span>
+                      <Badge variant={statusVariant[app.status] || "secondary"} className="capitalize">{app.status}</Badge>
                     </TableCell>
-                    <TableCell>{new Date(app.applied_at).toLocaleDateString()}</TableCell>
-                    <TableCell className="text-sm text-muted-foreground">{app.faculty_comment || "—"}</TableCell>
+                    <TableCell className="text-muted-foreground">{new Date(app.applied_at).toLocaleDateString()}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground max-w-[200px] truncate">{app.faculty_comment || "—"}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
