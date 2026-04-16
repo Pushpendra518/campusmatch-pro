@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { MapPin, DollarSign, Calendar } from "lucide-react";
+import { MapPin, Calendar } from "lucide-react";
 
 const FacultyInternships = () => {
   const { data: internships, isLoading } = useQuery({
@@ -31,7 +31,7 @@ const FacultyInternships = () => {
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
                   {i.location && <div className="flex items-center gap-2 text-muted-foreground"><MapPin className="h-3.5 w-3.5" />{i.location}</div>}
-                  {i.stipend && <div className="flex items-center gap-2 text-muted-foreground"><DollarSign className="h-3.5 w-3.5" />{i.stipend}</div>}
+                  {i.stipend && <div className="flex items-center gap-2 text-muted-foreground"><span className="font-medium text-xs">₹</span>{i.stipend}</div>}
                   {i.deadline && <div className="flex items-center gap-2 text-muted-foreground"><Calendar className="h-3.5 w-3.5" />{new Date(i.deadline).toLocaleDateString()}</div>}
                   <p className="text-muted-foreground leading-relaxed pt-1">{i.description}</p>
                 </CardContent>
