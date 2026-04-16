@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Search, MapPin, DollarSign, Calendar } from "lucide-react";
+import { Search, MapPin, Calendar } from "lucide-react";
 
 const StudentInternships = () => {
   const { user } = useAuth();
@@ -81,7 +81,7 @@ const StudentInternships = () => {
                   </CardHeader>
                   <CardContent className="space-y-2 text-sm flex-1">
                     {internship.location && <div className="flex items-center gap-2 text-muted-foreground"><MapPin className="h-3.5 w-3.5" />{internship.location}</div>}
-                    {internship.stipend && <div className="flex items-center gap-2 text-muted-foreground"><DollarSign className="h-3.5 w-3.5" />{internship.stipend}</div>}
+                    {internship.stipend && <div className="flex items-center gap-2 text-muted-foreground"><span className="font-medium text-xs">₹</span>{internship.stipend}</div>}
                     {internship.deadline && <div className="flex items-center gap-2 text-muted-foreground"><Calendar className="h-3.5 w-3.5" />{new Date(internship.deadline).toLocaleDateString()}</div>}
                     <p className="text-muted-foreground line-clamp-3 pt-1">{internship.description}</p>
                   </CardContent>
