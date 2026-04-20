@@ -1,0 +1,2 @@
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS skills TEXT[] NOT NULL DEFAULT '{}';
+ALTER TABLE public.internships ADD COLUMN IF NOT EXISTS skills TEXT[] NOT NULL DEFAULT '{}';
