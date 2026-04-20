@@ -65,6 +65,7 @@ export type Database = {
           location: string | null
           posted_by: string | null
           requirements: string | null
+          skills: string[]
           status: string
           stipend: string | null
           title: string
@@ -80,6 +81,7 @@ export type Database = {
           location?: string | null
           posted_by?: string | null
           requirements?: string | null
+          skills?: string[]
           status?: string
           stipend?: string | null
           title: string
@@ -95,6 +97,7 @@ export type Database = {
           location?: string | null
           posted_by?: string | null
           requirements?: string | null
+          skills?: string[]
           status?: string
           stipend?: string | null
           title?: string
@@ -172,6 +175,7 @@ export type Database = {
           id: string
           phone: string | null
           resume_url: string | null
+          skills: string[]
           updated_at: string
           user_id: string
         }
@@ -184,6 +188,7 @@ export type Database = {
           id?: string
           phone?: string | null
           resume_url?: string | null
+          skills?: string[]
           updated_at?: string
           user_id: string
         }
@@ -196,6 +201,7 @@ export type Database = {
           id?: string
           phone?: string | null
           resume_url?: string | null
+          skills?: string[]
           updated_at?: string
           user_id?: string
         }

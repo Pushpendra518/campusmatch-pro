@@ -6,13 +6,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CalendarDays, Clock, Video, MapPin, Link as LinkIcon } from "lucide-react";
-
-const statusVariant: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-  pending: "secondary",
-  approved: "default",
-  rejected: "destructive",
-  shortlisted: "outline",
-};
+import StatusBadge from "@/components/StatusBadge";
+import InterviewCountdown from "@/components/InterviewCountdown";
 
 const StudentApplications = () => {
   const { user } = useAuth();
@@ -63,7 +58,7 @@ const StudentApplications = () => {
             <p className="text-muted-foreground">No applications yet. Browse internships to apply!</p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div className="rounded-xl border shadow-sm overflow-hidden">
               <Table>
                 <TableHeader>
@@ -80,9 +75,7 @@ const StudentApplications = () => {
                     <TableRow key={app.id} className={i % 2 === 0 ? "bg-background" : "bg-muted/20"}>
                       <TableCell className="font-medium">{app.internships?.title}</TableCell>
                       <TableCell>{app.internships?.company}</TableCell>
-                      <TableCell>
-                        <Badge variant={statusVariant[app.status] || "secondary"} className="capitalize">{app.status}</Badge>
-                      </TableCell>
+                      <TableCell><StatusBadge status={app.status} /></TableCell>
                       <TableCell className="text-muted-foreground">{new Date(app.applied_at).toLocaleDateString()}</TableCell>
                       <TableCell className="text-sm text-muted-foreground max-w-[200px] truncate">{app.faculty_comment || "—"}</TableCell>
                     </TableRow>
@@ -102,8 +95,13 @@ const StudentApplications = () => {
                     return (
                       <Card key={iv.id} className="shadow-sm hover:shadow-md transition-shadow">
                         <CardHeader className="pb-2">
-                          <CardTitle className="text-base">{app.internships?.title}</CardTitle>
-                          <p className="text-sm text-muted-foreground">{app.internships?.company}</p>
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <CardTitle className="text-base truncate">{app.internships?.title}</CardTitle>
+                              <p className="text-sm text-muted-foreground truncate">{app.internships?.company}</p>
+                            </div>
+                            <InterviewCountdown date={iv.interview_date} time={iv.interview_time} />
+                          </div>
                         </CardHeader>
                         <CardContent className="space-y-2 text-sm">
                           <div className="flex items-center gap-2 text-muted-foreground">
@@ -148,9 +146,7 @@ const StudentApplications = () => {
 
                           {iv.selection_status && (
                             <div className="pt-1">
-                              <Badge variant={iv.selection_status === "selected" ? "default" : "destructive"} className="capitalize">
-                                {iv.selection_status}
-                              </Badge>
+                              <StatusBadge status={iv.selection_status} />
                             </div>
                           )}
                         </CardContent>
