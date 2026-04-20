@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, KeyboardEvent } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,13 +9,35 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { Plus, X } from "lucide-react";
 
 const RecruiterPost = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [form, setForm] = useState({ title: "", company: "", description: "", location: "", stipend: "", requirements: "", deadline: "" });
+  const [skills, setSkills] = useState<string[]>([]);
+  const [skillInput, setSkillInput] = useState("");
+
+  const addSkill = () => {
+    const v = skillInput.trim();
+    if (!v) return;
+    if (skills.map((s) => s.toLowerCase()).includes(v.toLowerCase())) {
+      setSkillInput("");
+      return;
+    }
+    setSkills([...skills, v]);
+    setSkillInput("");
+  };
+  const removeSkill = (s: string) => setSkills(skills.filter((x) => x !== s));
+  const onSkillKey = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      addSkill();
+    }
+  };
 
   const mutation = useMutation({
     mutationFn: async () => {
@@ -23,7 +45,8 @@ const RecruiterPost = () => {
         ...form,
         deadline: form.deadline ? new Date(form.deadline).toISOString() : null,
         posted_by: user!.id,
-      });
+        skills,
+      } as any);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -51,6 +74,37 @@ const RecruiterPost = () => {
               <div className="space-y-2"><Label>Stipend</Label><Input value={form.stipend} onChange={(e) => setForm({ ...form, stipend: e.target.value })} placeholder="₹15,000/month" /></div>
             </div>
             <div className="space-y-2"><Label>Requirements</Label><Textarea value={form.requirements} onChange={(e) => setForm({ ...form, requirements: e.target.value })} placeholder="Skills and qualifications needed..." /></div>
+
+            <div className="space-y-2">
+              <Label>Required Skills</Label>
+              <div className="flex gap-2">
+                <Input
+                  value={skillInput}
+                  onChange={(e) => setSkillInput(e.target.value)}
+                  onKeyDown={onSkillKey}
+                  placeholder="e.g. React, Node.js (Enter to add)"
+                />
+                <Button type="button" variant="outline" onClick={addSkill}>
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="flex flex-wrap gap-2 pt-1 min-h-[1.5rem]">
+                {skills.map((s) => (
+                  <Badge key={s} variant="secondary" className="gap-1 pr-1">
+                    {s}
+                    <button
+                      type="button"
+                      onClick={() => removeSkill(s)}
+                      className="rounded-full hover:bg-muted-foreground/20 p-0.5 transition-colors"
+                      aria-label={`Remove ${s}`}
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+            </div>
+
             <div className="space-y-2"><Label>Deadline</Label><Input type="date" value={form.deadline} onChange={(e) => setForm({ ...form, deadline: e.target.value })} /></div>
             <Button onClick={() => mutation.mutate()} disabled={mutation.isPending || !form.title || !form.company} className="shadow-sm">
               {mutation.isPending ? "Posting..." : "Post Internship"}
