@@ -72,7 +72,6 @@ const Register = () => {
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="student">Student</SelectItem>
-                    <SelectItem value="admin">Admin (Placement Cell)</SelectItem>
                     <SelectItem value="faculty">Faculty / Mentor</SelectItem>
                     <SelectItem value="recruiter">Recruiter / Company</SelectItem>
                   </SelectContent>
